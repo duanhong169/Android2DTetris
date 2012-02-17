@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="mode_ready">Tetris\nPress Up To Play</string>
+    <string name="mode_pause">Paused\nPress Up To Resume</string>
+    <string name="mode_lose_prefix">Game Over\nScore: </string>
+    <string name="mode_lose_suffix">\nPress Up To Play</string>
+    <string name="tetris_layout_text_text"/>
+</resources>

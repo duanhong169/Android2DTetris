@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	
+	<com.segmac.tetris.TetrisView
+	    android:id="@+id/tetris"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" />
+	
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" >
+		
+		<TextView
+		 android:id="@+id/game_status_text"
+			android:text="@string/tetris_layout_text_text"
+			android:visibility="visible"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:gravity="center_horizontal"
+			android:textColor="#ff8888ff"
+			android:background="@android:color/black"
+			android:textSize="24sp"/>
+		
+		<TextView
+            android:id="@+id/score_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:visibility="invisible" />
+				
+	</RelativeLayout>
+</FrameLayout>
