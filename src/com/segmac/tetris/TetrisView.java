@@ -82,7 +82,8 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
     private TextView mStatusText;
     private TextView mScoreText;
     private static long mScore = 0;
-	private static int intervalTime = 1000;//游戏的时钟频率（初始每1000毫秒一次）
+    private static long mLevel = 1;
+	private static long intervalTime = 1000;//游戏的时钟频率（初始每1000毫秒一次）
 	
     //用于驱动游戏
     private RefreshHandler mRedrawHandler = new RefreshHandler();
@@ -231,8 +232,10 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         }
         mScoreText.setText("已得分\n" + mScore);
         
-        //加速游戏规则，0.1为加速系数，20为加速间隔分数
-        intervalTime /= 1 + 0.1 * (mScore / 20);
+        //加速游戏规则，20为加速间隔分数，1000为初始间隔，100为每升一级的增量
+        mLevel = (mScore / 20) + 1;//每20分升一级
+        //每升一级，间隔减少100，最快100
+        if(intervalTime > 100) intervalTime = 1000 - (100 * mLevel);
 	}
 	
 	//当transform（按键↑）事件发生时，改变活动格数组
