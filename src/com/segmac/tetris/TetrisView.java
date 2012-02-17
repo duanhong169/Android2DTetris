@@ -82,7 +82,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
     private TextView mStatusText;
     private TextView mScoreText;
     private static long mScore = 0;
-    private static long mLevel = 1;
+    private static long mLevel = 0;
 	private static long intervalTime = 1000;//游戏的时钟频率（初始每1000毫秒一次）
 	
     //用于驱动游戏
@@ -93,7 +93,6 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         @Override
         public void handleMessage(Message msg) {
             TetrisView.this.tick();
-            TetrisView.this.invalidate();
         }
 
         //定时器，睡眠一定时间后发送消息，构成循环
@@ -233,9 +232,9 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         mScoreText.setText("已得分\n" + mScore);
         
         //加速游戏规则，20为加速间隔分数，1000为初始间隔，100为每升一级的增量
-        mLevel = (mScore / 20) + 1;//每20分升一级
+        mLevel = ((mScore / 10) < 9) ? (mScore / 10) : 9;//每20分升一级，最高9级
         //每升一级，间隔减少100，最快100
-        if(intervalTime > 100) intervalTime = 1000 - (100 * mLevel);
+        intervalTime = 1000 - (100 * mLevel);
 	}
 	
 	//当transform（按键↑）事件发生时，改变活动格数组
@@ -325,13 +324,21 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         basePoint.column++;
 	}
 	
+	//当空格键被按下时，当前方块瞬间跌落
+	private void blink(){
+		while(downShiftActiveTileArray());
+		tick();
+	}
+	
 	//方块的碰撞检测逻辑
 	private boolean testCollide(int actionType, int column, int row){
 		switch(actionType){
 		case ACTION_TRANSFORM:
 			Coordinate[] nextCoordinates = newComingTetris.getNextTetrisState();
 			for(int i = 0; i < nextCoordinates.length; i++){
+				if(nextCoordinates[i].row + basePoint.row < 0) return true;
 				if(nextCoordinates[i].row + basePoint.row >= NUM_ROWS) return true;
+				if(nextCoordinates[i].column + basePoint.column < 0) return true;
 				if(nextCoordinates[i].column + basePoint.column >= NUM_COLUMNS) return true;
 				if(!isTileActive[nextCoordinates[i].row][nextCoordinates[i].column] 
 						&& mTileArray[nextCoordinates[i].row][nextCoordinates[i].column]
@@ -544,7 +551,12 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
     
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+		if (keyCode == KeyEvent.KEYCODE_SPACE){
+			if (mMode == RUNNING) {
+				blink();
+			}
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
             if (mMode == READY || mMode == LOSE) {
                 //初始化游戏
                 clearTiles();
@@ -565,25 +577,35 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
             	setMode(RUNNING);
                 mScoreText.setVisibility(View.VISIBLE);
                 mScoreText.setText("已得分\n0");
-                tick();
                 return true;
             }
             
-            //变换方块
-			transformActiveTileArray();
-			drawTheGameView();
+            if (mMode == RUNNING) {
+	            //变换方块
+				transformActiveTileArray();
+				drawTheGameView();
+            }
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			//加速下降
-			tick();
+			if (mMode == RUNNING) {
+				//加速下降
+				tick();
+			}
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			leftShiftActiveTileArray();
-			drawTheGameView();
+			if (mMode == RUNNING) {
+				leftShiftActiveTileArray();
+				drawTheGameView();
+			}
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			rightShiftActiveTileArray();
-			drawTheGameView();
+			if (mMode == RUNNING) {
+				rightShiftActiveTileArray();
+				drawTheGameView();
+			}
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_P) {
+			setMode(PAUSE);
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

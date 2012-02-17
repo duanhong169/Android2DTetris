@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="mode_ready">Tetris\nPress Up To Play</string>
-    <string name="mode_pause">Paused\nPress Up To Resume</string>
-    <string name="mode_lose_prefix">Game Over\nScore: </string>
-    <string name="mode_lose_suffix">\nPress Up To Play</string>
+    <string name="mode_ready">俄罗斯方块\n按两次方向键↑开始游戏\n\n操作提示：\n方向键↑======变换方块\n方向键←↓→===移动方块\n空格键====方块立即落地\nP键=========暂停游戏</string>
+    <string name="mode_pause">游戏已暂停\n按方向键上继续游戏</string>
+    <string name="mode_lose_prefix">游戏结束\n所得分数: </string>
+    <string name="mode_lose_suffix">\n按方向键上开始新游戏</string>
     <string name="tetris_layout_text_text"/>
 </resources>
