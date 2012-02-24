@@ -15,8 +15,7 @@ public class J implements TetrisObject {
 			new Coordinate(2, 2), new Coordinate(1, 2)};
 	private final Coordinate[] stateFour = {new Coordinate(0, 0), new Coordinate(1, 0),
 			new Coordinate(2, 0), new Coordinate(2, 1)};
-	public Coordinate[] currentState = stateOne;
-	public Coordinate[] prevState = stateOne;
+	private Coordinate[] currentState = stateOne;
 
 	public J(){
 
@@ -24,7 +23,6 @@ public class J implements TetrisObject {
 
 	@Override
 	public void transform() {
-		prevState = currentState;
 		if(currentState == stateOne) currentState = stateTwo;
 		else if(currentState == stateTwo) currentState = stateThree;
 		else if(currentState == stateThree) currentState = stateFour;
@@ -39,11 +37,6 @@ public class J implements TetrisObject {
 	@Override
 	public int getTetrisColor() {
 		return Color.BLUE;
-	}
-
-	@Override
-	public Coordinate[] getPrevTetrisState() {
-		return prevState;
 	}
 
 	@Override

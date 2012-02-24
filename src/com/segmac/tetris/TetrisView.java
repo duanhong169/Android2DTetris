@@ -143,7 +143,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
 				mYOffset + NUM_ROWS*mTileSize, mPaint);
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int column = 0; column < NUM_COLUMNS; column++) {
-                if (mTileArray[row][column] != 0) {
+                if (mTileArray[row][column] != Color.WHITE) {
             		mCanvas.save();
             		mCanvas.clipRect(mXOffset + column * mTileSize + INTERVAL_BETWEEN_TILES,
             				mYOffset + row * mTileSize + INTERVAL_BETWEEN_TILES,
@@ -156,21 +156,30 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         }
 
         //绘制方块预览区域
-		mCanvas.drawRect(mPreviewXOffset, mPreviewYOffset, mPreviewXOffset + SIZE_OF_PREVIEW * mTileSize,
+		mCanvas.drawRect(mPreviewXOffset, mPreviewYOffset, 
+				mPreviewXOffset + SIZE_OF_PREVIEW * mTileSize,
 				mPreviewYOffset + SIZE_OF_PREVIEW * mTileSize, mPaint);
         for (int row = 0; row < SIZE_OF_PREVIEW; row++) {
             for (int column = 0; column < SIZE_OF_PREVIEW; column++) {
-                if (mPreviewTileArray[row][column] != 0) {
+                if (mPreviewTileArray[row][column] != Color.WHITE) {
             		mCanvas.save();
-            		mCanvas.clipRect(mPreviewXOffset + column * mTileSize + INTERVAL_BETWEEN_TILES,
+            		mCanvas.clipRect(mPreviewXOffset + column * mTileSize
+            					+ INTERVAL_BETWEEN_TILES,
             				mPreviewYOffset + row * mTileSize + INTERVAL_BETWEEN_TILES,
-            				mPreviewXOffset + (column+1) * mTileSize - INTERVAL_BETWEEN_TILES,
+            				mPreviewXOffset + (column+1) * mTileSize
+            					- INTERVAL_BETWEEN_TILES,
             				mPreviewYOffset + (row+1) * mTileSize - INTERVAL_BETWEEN_TILES);
             		mCanvas.drawColor(mPreviewTileArray[row][column]);
                     mCanvas.restore();
                 }
             }
         }
+        
+//		Paint paint = new Paint();
+//		paint.setColor(Color.WHITE);
+//		paint.setStrokeWidth(4);
+//		paint.setAntiAlias(true);	
+//      mCanvas.drawText("已得分：\n" + mScore, 240, 360, paint);
         mSurfaceHolder.unlockCanvasAndPost(mCanvas);
 	}
 	
@@ -197,7 +206,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
 	private void collapse(int baseRow, int activeRows){
 		Log.v(TAG, "baseRow = " + baseRow + "; activeRows = " + activeRows);
 		int numCollapse = 0;
-        for (int row = baseRow; row < (baseRow + activeRows < 20 ? baseRow + activeRows : 20); row++) {
+        for (int row = baseRow; row < (baseRow + activeRows < NUM_ROWS ? baseRow + activeRows : NUM_ROWS); row++) {
             boolean collapseThisRow = true;
         	for (int column = 0; column < NUM_COLUMNS; column++) {
             	if(mTileArray[row][column] == Color.WHITE) collapseThisRow = false;
@@ -232,7 +241,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         mScoreText.setText("已得分\n" + mScore);
         
         //加速游戏规则，20为加速间隔分数，1000为初始间隔，100为每升一级的增量
-        mLevel = ((mScore / 10) < 9) ? (mScore / 10) : 9;//每20分升一级，最高9级
+        mLevel = ((mScore / 20) < 9) ? (mScore / 10) : 9;//每20分升一级，最高9级
         //每升一级，间隔减少100，最快100
         intervalTime = 1000 - (100 * mLevel);
 	}
@@ -243,13 +252,13 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
 			Log.v(TAG, "Transform failed!");
 			return;
 		}
-		newComingTetris.transform();
-		Coordinate[] prevCoordinates = newComingTetris.getPrevTetrisState();
 		Coordinate[] currentCoordinates = newComingTetris.getCurrentTetrisState();
-		for(int i = 0; i < prevCoordinates.length; i++){
-			isTileActive[prevCoordinates[i].row + basePoint.row][prevCoordinates[i].column + basePoint.column] = false;
-			unsetTile(prevCoordinates[i].row + basePoint.row, prevCoordinates[i].column + basePoint.column);
+		for(int i = 0; i < currentCoordinates.length; i++){
+			isTileActive[currentCoordinates[i].row + basePoint.row][currentCoordinates[i].column + basePoint.column] = false;
+			unsetTile(currentCoordinates[i].row + basePoint.row, currentCoordinates[i].column + basePoint.column);
 		}
+		newComingTetris.transform();
+		currentCoordinates = newComingTetris.getCurrentTetrisState();
 		for(int i = 0; i < currentCoordinates.length; i++){
 			isTileActive[currentCoordinates[i].row + basePoint.row][currentCoordinates[i].column + basePoint.column] = true;
 			setTile(newComingTetris.getTetrisColor(), currentCoordinates[i].row + basePoint.row, currentCoordinates[i].column + basePoint.column);
@@ -462,6 +471,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
     	TetrisObject newTetrisObject;
 		Random random = new Random();
 		int i = random.nextInt(7);
+		//i = 3;
 		switch (i) {
 		case 0:
 			newTetrisObject = new I();
@@ -491,7 +501,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
 		return newTetrisObject;
     }
     
-    //将二维数组转换为一位数组，供保存状态使用
+    //将二维数组转换为一维数组，供保存状态使用
     private int[] twoDimIntArrayToDimIntArray(int[][] tileArray) {
         int[] rawIntArray = new int[NUM_ROWS * NUM_COLUMNS];
     	for (int row = 0; row < NUM_ROWS; row++) {
@@ -523,7 +533,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
         return map;
     }
 
-    //将一维数组转换为二位数组，供恢复状态使用
+    //将一维数组转换为二维数组，供恢复状态使用
     private int[][] DimIntArrayToTwoDimIntArray(int[] rawArray) {
     	int[][] parsedArray = new int[NUM_ROWS][NUM_COLUMNS];
     	for (int i = 0; i < NUM_ROWS * NUM_COLUMNS; i++) {
@@ -575,8 +585,8 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
             if (mMode == PAUSE) {
                 //继续游戏
             	setMode(RUNNING);
-                mScoreText.setVisibility(View.VISIBLE);
-                mScoreText.setText("已得分\n0");
+            	mScoreText.setVisibility(View.VISIBLE);
+            	mScoreText.setText("已得分\n0");
                 return true;
             }
             
@@ -617,7 +627,7 @@ public class TetrisView extends SurfaceView implements SurfaceHolder.Callback{
     }
     
     public void setScoreTextView(TextView newView) {
-        mScoreText = newView;
+    	mScoreText = newView;
     }
 	
     //设置游戏的状态

@@ -6,8 +6,7 @@ public class O implements TetrisObject {
 
 	private final Coordinate[] stateOne = {new Coordinate(0, 0), new Coordinate(0, 1),
 		new Coordinate(1, 0), new Coordinate(1, 1)};
-	public Coordinate[] currentState = stateOne;
-	public Coordinate[] prevState = stateOne;
+	private Coordinate[] currentState = stateOne;
 	
 	public O(){
 		
@@ -26,11 +25,6 @@ public class O implements TetrisObject {
 	@Override
 	public int getTetrisColor() {
 		return Color.BLACK;
-	}
-
-	@Override
-	public Coordinate[] getPrevTetrisState() {
-		return prevState;
 	}
 
 	@Override

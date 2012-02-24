@@ -2,8 +2,6 @@ package com.segmac.tetris.object;
 
 import java.util.Random;
 
-import android.graphics.Color;
-
 public class T implements TetrisObject {
 
 	//注意：Coordinate(列, 行)
@@ -15,8 +13,7 @@ public class T implements TetrisObject {
 			new Coordinate(1, 2), new Coordinate(2, 2)};
 	private final Coordinate[] stateFour = {new Coordinate(2, 0), new Coordinate(1, 1),
 			new Coordinate(2, 1), new Coordinate(2, 2)};
-	public Coordinate[] currentState = stateOne;
-	public Coordinate[] prevState = stateOne;
+	private Coordinate[] currentState = stateOne;
 
 	public T(){
 
@@ -24,7 +21,6 @@ public class T implements TetrisObject {
 
 	@Override
 	public void transform() {
-		prevState = currentState;
 		if(currentState == stateOne) currentState = stateTwo;
 		else if(currentState == stateTwo) currentState = stateThree;
 		else if(currentState == stateThree) currentState = stateFour;
@@ -38,12 +34,7 @@ public class T implements TetrisObject {
 
 	@Override
 	public int getTetrisColor() {
-		return Color.YELLOW;
-	}
-
-	@Override
-	public Coordinate[] getPrevTetrisState() {
-		return prevState;
+		return 0xfff0a000; //金黄色
 	}
 
 	@Override

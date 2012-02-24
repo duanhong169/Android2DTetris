@@ -11,8 +11,7 @@ public class S implements TetrisObject {
 			new Coordinate(0, 1), new Coordinate(1, 1)};
 	private final Coordinate[] stateTwo = {new Coordinate(1, 0), new Coordinate(1, 1), 
 			new Coordinate(2, 1), new Coordinate(2, 2)};
-	public Coordinate[] currentState = stateOne;
-	public Coordinate[] prevState = stateOne;
+	private Coordinate[] currentState = stateOne;
 
 	public S(){
 
@@ -20,7 +19,6 @@ public class S implements TetrisObject {
 	
 	@Override
 	public void transform() {
-		prevState = currentState;
 		if(currentState == stateOne) currentState = stateTwo;
 		else if(currentState == stateTwo) currentState = stateOne;
 	}
@@ -51,11 +49,6 @@ public class S implements TetrisObject {
 	@Override
 	public Coordinate[] getCurrentTetrisState() {
 		return currentState;
-	}
-
-	@Override
-	public Coordinate[] getPrevTetrisState() {
-		return prevState;
 	}
 
 	@Override

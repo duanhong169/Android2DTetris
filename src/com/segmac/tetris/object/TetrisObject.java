@@ -10,8 +10,6 @@ public interface TetrisObject {
 	
 	public abstract Coordinate[] getCurrentTetrisState();
 	
-	public abstract Coordinate[] getPrevTetrisState();
-	
 	public abstract int getTetrisColor();
 	
 	/**
